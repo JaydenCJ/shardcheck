@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="608" viewBox="0 0 960 608" font-family="Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="14" xml:space="preserve">
+  <!-- Terminal transcript of a real shardcheck session (check on a broken
+       checkpoint, then ls). Text is copied verbatim from an actual run of
+       the commands shown; finding messages too wide for the frame are
+       wrapped onto an aligned continuation line. See examples/preflight.sh
+       to reproduce the exact output. -->
+  <rect width="960" height="608" rx="10" fill="#0d1117"/>
+  <rect width="960" height="34" rx="10" fill="#161b22"/>
+  <rect y="20" width="960" height="14" fill="#161b22"/>
+  <circle cx="22" cy="17" r="6" fill="#ff5f57"/>
+  <circle cx="42" cy="17" r="6" fill="#febc2e"/>
+  <circle cx="62" cy="17" r="6" fill="#28c840"/>
+  <text x="480" y="22" fill="#8b949e" text-anchor="middle" font-size="12">shardcheck — the five-second preflight for sharded checkpoints</text>
+  <g fill="#c9d1d9">
+    <text x="24" y="62"><tspan fill="#7ee787">$</tspan> shardcheck check checkpoints/my-model</text>
+    <text x="24" y="88">shardcheck: checkpoints/my-model</text>
+    <text x="24" y="110">mode: index   3 shards   7 tensors</text>
+    <text x="24" y="146" fill="#e6edf3">model-00002-of-00002.safetensors</text>
+    <text x="24" y="168">  <tspan fill="#f85149">error</tspan>   shard-truncated      file is 6,520 bytes but header + tensor data need 10,616</text>
+    <text x="24" y="188" fill="#8b949e">                               (4,096 bytes missing from the tail — half-uploaded?)</text>
+    <text x="24" y="210">  <tspan fill="#f85149">error</tspan>   duplicate-tensor     'lm_head.weight' is defined in 2 shards: model-00002-of-00002.safetensors,</text>
+    <text x="24" y="230" fill="#8b949e">                               model-00003-of-00003.safetensors</text>
+    <text x="24" y="252">  <tspan fill="#f85149">error</tspan>   missing-tensor       'model.layers.2.attn.weight' is mapped here but no shard on disk defines it</text>
+    <text x="24" y="286" fill="#e6edf3">model-00003-of-00003.safetensors</text>
+    <text x="24" y="308">  <tspan fill="#d29922">warning</tspan> orphan-shard         present next to the index but never referenced by weight_map</text>
+    <text x="24" y="342" fill="#e6edf3">model-00001-of-00002.safetensors</text>
+    <text x="24" y="364">  <tspan fill="#f85149">error</tspan>   wrong-shard          'model.norm.weight' is mapped here but actually lives in</text>
+    <text x="24" y="384" fill="#8b949e">                               model-00002-of-00002.safetensors</text>
+    <text x="24" y="418" fill="#f85149">FAIL: 4 errors, 1 warning in 3 of 3 shards</text>
+    <text x="24" y="458"><tspan fill="#7ee787">$</tspan> shardcheck ls checkpoints/my-model</text>
+    <text x="24" y="484" fill="#8b949e">shard                             tensors  tensor bytes  file bytes  status</text>
+    <text x="24" y="506">model-00001-of-00002.safetensors  3        14,336        14,608      referenced</text>
+    <text x="24" y="528">model-00002-of-00002.safetensors  3        10,368        <tspan fill="#f85149">6,520</tspan>       referenced</text>
+    <text x="24" y="550">model-00003-of-00003.safetensors  1        8,192         8,280       <tspan fill="#d29922">orphan</tspan></text>
+    <text x="24" y="582"><tspan fill="#7ee787">$</tspan> echo $?  <tspan fill="#8b949e"># exit 1 → CI blocks the publish before anyone pulls it</tspan></text>
+  </g>
+</svg>
